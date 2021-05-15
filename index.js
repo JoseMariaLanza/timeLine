@@ -44,17 +44,17 @@ function timeLine() {
     console.log(days)
 }
 
-function formatDate(id) {
-    let dayMonth = document.getElementById(id).lastElementChild.innerHTML.split('-')
-    return new Date(2021, dayMonth[1]-1, dayMonth[0])
-}
-
 function getDays() {
     let firstDate = formatDate(1)
     let lastDate = formatDate(8)
     let diffInTime = lastDate.getTime() - firstDate.getTime()
     let diffInDays = diffInTime / (1000 * 3600 * 24)
     return diffInDays
+}
+
+function formatDate(id) {
+    let dayMonth = document.getElementById(id).lastElementChild.innerHTML.split('-')
+    return new Date(2021, dayMonth[1]-1, dayMonth[0])
 }
 
 timeLine()
