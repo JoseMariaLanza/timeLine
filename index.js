@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('[data-toggle="popover"]').popover({
         title: popoverTitle,
         html: true,
@@ -6,11 +6,11 @@ $(document).ready(function() {
         trigger: 'hover',
         content: popoverContent
     })
+    timeLine()
 });
 
 function popoverContent() {
     let element = $(this)
-    // let content = document.querySelector('#dataPopover')
     let tag = document.getElementById(element.attr('id'))
     return tag.innerHTML
 }
@@ -26,27 +26,29 @@ function popoverTitle() {
     return parentNode.lastElementChild.lastElementChild.innerHTML
 }
 
-// --------------------------------------------------------------
-
-// FUNCIONAMIENTO DE POPOVER
-
-// $(document).ready(function() {
-//     $data = $(document).getElementById('dataPopover')
-//     $('[data-toggle="popover", data-content="$data"]').popover()
-// });
-
-// --------------------------------------------------------------
-
 function timeLine() {
     let timeLineWidth = document.getElementById('timeline').offsetWidth;
-    console.log(timeLineWidth)
-    let days = getDays()
-    console.log(days)
+
+    const firstDateElement = document.getElementById(1)
+    firstDateElement.style.left = "0px"
+
+    const lastDateElement = document.getElementById(8)
+
+    const totalDays = getDaysBetweenElements(parseInt(firstDateElement.id), parseInt(lastDateElement.id))
+
+    for (let i = 2; i <= 8; i++) {
+        let actualDateElement = document.getElementById(i)
+
+        let left = (timeLineWidth * getDaysBetweenElements(parseInt(firstDateElement.id), parseInt(actualDateElement.id))) / totalDays
+
+        left = (i === 8) ? left -= actualDateElement.offsetWidth : left
+        actualDateElement.style.left = left + "px"
+    }
 }
 
-function getDays() {
-    let firstDate = formatDate(1)
-    let lastDate = formatDate(8)
+function getDaysBetweenElements(element_1, element_2) {
+    let firstDate = formatDate(element_1)
+    let lastDate = formatDate(element_2)
     let diffInTime = lastDate.getTime() - firstDate.getTime()
     let diffInDays = diffInTime / (1000 * 3600 * 24)
     return diffInDays
@@ -54,74 +56,16 @@ function getDays() {
 
 function formatDate(id) {
     let dayMonth = document.getElementById(id).lastElementChild.innerHTML.split('-')
-    return new Date(2021, dayMonth[1]-1, dayMonth[0])
+    return new Date(new Date().getFullYear(), dayMonth[1] - 1, dayMonth[0])
 }
 
-timeLine()
+function debounce(func, time) {
+    var time = time || 100
+    var timer
+    return function(event) {
+        if(timer) clearTimeout(timer)
+        timer = setTimeout(func, time, event)
+    }
+}
 
-
-// document.addEventListener('DOMContentLoaded', readddy);
-
-// function readddy() {
-
-//     var navListItems = $('div.setup-panel div a'),
-
-//         allWells = $('.setup-content'),
-
-//         allNextBtn = $('.nextBtn'),
-
-//         allPrevBtn = $('.prevBtn');
-
-
-
-//     allWells.hide();
-
-
-
-//     navListItems.click(function (e) {
-
-//         e.preventDefault();
-
-//         var target = $($(this).attr('href')),
-
-//             item = $(this);
-
-
-
-//         if (!item.hasClass('disabled')) {
-
-//             navListItems.removeClass('btn-indigo').addClass('btn-default');
-
-//             item.addClass('btn-indigo');
-
-//             allWells.hide();
-
-//             target.show();
-
-//             target.find('input:eq(0)').focus();
-
-//         }
-
-//     });
-
-
-
-//     allPrevBtn.click(function () {
-
-//         console.log('allPrevBtn');
-
-//     });
-
-
-
-//     allNextBtn.click(function () {
-
-//         console.log('allNextBtn');
-
-//     });
-
-
-
-//     $('div.setup-panel div a.btn-indigo').trigger('click');
-
-// };
+window.addEventListener("resize", debounce(timeLine, 150))
